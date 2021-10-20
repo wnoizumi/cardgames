@@ -1,8 +1,9 @@
 package com.logmein.cardgames.domain.builders;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -17,9 +18,9 @@ public class DeckBuilderUnitTest {
 	private DeckBuilder deckBuilder;
 	
 	@Test
-	public void whenBuildDeck_shouldReturn_deckWith52Cards() {
+	public void whenBuildDeck_ShouldReturn_DeckWith52Cards() {
 		Deck deck = deckBuilder.buildDeck();
 		
-		Assert.assertEquals(deck.getCards().size(), 52);
+		assertThat(deck.getCards(), hasSize(52));
 	}
 }
