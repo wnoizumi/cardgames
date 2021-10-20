@@ -25,10 +25,8 @@ import com.logmein.cardgames.api.commands.CreateGameCommand;
 import com.logmein.cardgames.api.commands.DeckGameAssociationCommand;
 import com.logmein.cardgames.api.views.DeckView;
 import com.logmein.cardgames.api.views.GameView;
-import com.logmein.cardgames.domain.entities.Deck;
 import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.entities.PlayingCard;
-import com.logmein.cardgames.domain.repositories.DeckRepository;
 import com.logmein.cardgames.domain.repositories.GameRepository;
 import com.logmein.cardgames.domain.repositories.PlayingCardRepository;
 
@@ -50,9 +48,6 @@ public class GameServiceIntegrationTest {
 	private GameRepository gameRepository;
 	
 	@Autowired
-	private DeckRepository deckRepository;
-	
-	@Autowired
 	private PlayingCardRepository playingCardRepository;
 	
 	@After
@@ -61,7 +56,7 @@ public class GameServiceIntegrationTest {
 	}
 	
 	@Test
-	public void whenNewGame_WithoutName_then_shouldCreateGame() {
+	public void whenNewGame_WithoutName_Then_ShouldCreateGame() {
 		CreateGameCommand command = new CreateGameCommand();
 		command.name = null;
 		
@@ -72,7 +67,7 @@ public class GameServiceIntegrationTest {
 	}
 	
 	@Test
-	public void whenNewGame_WithName_then_shouldCreateGame() {
+	public void whenNewGame_WithName_Then_ShouldSaveToDb() {
 		CreateGameCommand command = new CreateGameCommand();
 		command.name = "game 1";
 		
@@ -83,7 +78,7 @@ public class GameServiceIntegrationTest {
 	}
 	
 	@Test
-	public void whenDeleteExistingGame_then_shouldRemoveFromDb() {
+	public void whenDeleteExistingGame_Then_ShouldRemoveFromDb() {
 		Game existingGame = gameRepository.save(new Game("game 1"));
 		
 		List<Game> all = gameRepository.findAll();
@@ -99,7 +94,7 @@ public class GameServiceIntegrationTest {
 	
 	@Test
 	@Transactional
-	public void whenAddingDeckToGame_then_shouldCreatePlayingCards() {
+	public void whenAddingDeckToGame_Then_ShouldCreatePlayingCards() {
 		Game game = gameRepository.saveAndFlush(new Game("game 1"));
 		DeckView deckView = deckService.newDeck();
 		DeckGameAssociationCommand command = new DeckGameAssociationCommand();
