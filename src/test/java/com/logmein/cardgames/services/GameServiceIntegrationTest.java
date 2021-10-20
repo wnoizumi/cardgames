@@ -16,26 +16,44 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.logmein.cardgames.CardgamesApplication;
 import com.logmein.cardgames.api.commands.CreateGameCommand;
+import com.logmein.cardgames.api.commands.DeckGameAssociationCommand;
+import com.logmein.cardgames.api.views.DeckView;
 import com.logmein.cardgames.api.views.GameView;
+import com.logmein.cardgames.domain.entities.Deck;
 import com.logmein.cardgames.domain.entities.Game;
+import com.logmein.cardgames.domain.entities.PlayingCard;
+import com.logmein.cardgames.domain.repositories.DeckRepository;
 import com.logmein.cardgames.domain.repositories.GameRepository;
+import com.logmein.cardgames.domain.repositories.PlayingCardRepository;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = CardgamesApplication.class)
 @AutoConfigureTestDatabase
 @EnableAutoConfiguration
+@Profile("test")
 public class GameServiceIntegrationTest {
 
 	@Autowired
 	private GameService gameService;
 	
 	@Autowired
+	private DeckService deckService;
+	
+	@Autowired
 	private GameRepository gameRepository;
+	
+	@Autowired
+	private DeckRepository deckRepository;
+	
+	@Autowired
+	private PlayingCardRepository playingCardRepository;
 	
 	@After
 	public void resetDb() {
@@ -77,5 +95,21 @@ public class GameServiceIntegrationTest {
 		all = gameRepository.findAll();
 		
 		assertThat(all, hasSize(0));
+	}
+	
+	@Test
+	@Transactional
+	public void whenAddingDeckToGame_then_shouldCreatePlayingCards() {
+		Game game = gameRepository.saveAndFlush(new Game("game 1"));
+		DeckView deckView = deckService.newDeck();
+		DeckGameAssociationCommand command = new DeckGameAssociationCommand();
+		command.deckUuid = deckView.getUuid();
+		command.gameUuid = game.getUuid();
+		
+		GameView gameView = gameService.addDeckToGame(command);
+		
+		List<PlayingCard> playingCards = playingCardRepository.findAllAvailableByGame(gameView.getUuid());
+		
+		assertThat(playingCards, hasSize(52));
 	}
 }

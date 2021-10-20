@@ -1,5 +1,6 @@
 package com.logmein.cardgames.domain.entities;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
@@ -33,6 +34,17 @@ public class Game {
 			orphanRemoval = true,
 			mappedBy = "game") 
 	private Set<Player> players;
+	
+	@OneToMany(fetch = FetchType.LAZY,
+			cascade = CascadeType.ALL,
+			orphanRemoval = true,
+			mappedBy = "game")
+	private Set<PlayingCard> playingCards;
+	
+	@OneToMany(fetch = FetchType.LAZY,
+			cascade = CascadeType.ALL,
+			mappedBy = "game")
+	private List<Deck> decks;
 	
 	public Game() {
 		this.uuid = UUID.randomUUID();
@@ -74,6 +86,22 @@ public class Game {
 	public void setPlayers(Set<Player> players) {
 		this.players = players;
 	}
+	
+	public Set<PlayingCard> getPlayingCards() {
+		return playingCards;
+	}
+
+	private void setPlayingCards(Set<PlayingCard> playingCards) {
+		this.playingCards = playingCards;
+	}
+	
+	public List<Deck> getDecks() {
+		return decks;
+	}
+
+	public void setDecks(List<Deck> decks) {
+		this.decks = decks;
+	}
 
 	@Override
 	public int hashCode() {
@@ -95,5 +123,8 @@ public class Game {
 	@Override
 	public String toString() {
 		return "Game [uuid=" + uuid + ", name=" + name + "]";
+	}
+
+	public void shuffleCards() {
 	}
 }

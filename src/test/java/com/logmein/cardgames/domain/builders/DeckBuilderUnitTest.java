@@ -6,12 +6,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.logmein.cardgames.domain.entities.Deck;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Profile("test")
 public class DeckBuilderUnitTest {
 	
 	@Autowired

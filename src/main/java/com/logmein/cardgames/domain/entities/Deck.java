@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -35,6 +36,9 @@ public class Deck {
 			orphanRemoval = true, 
 			mappedBy = "deck")
 	private Set<Card> cards;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Game game;
 	
 	public Deck() {
 		this.uuid = UUID.randomUUID();
@@ -65,6 +69,14 @@ public class Deck {
 		if (this.cards != null)
 			throw new InvalidDeckOperation("The cards of a deck should not be changed");
 		this.cards = cards;
+	}
+	
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
 	}
 
 	@Override
