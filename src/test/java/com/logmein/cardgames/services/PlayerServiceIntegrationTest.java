@@ -3,7 +3,6 @@ package com.logmein.cardgames.services;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
 import java.util.List;
@@ -46,6 +45,7 @@ public class PlayerServiceIntegrationTest {
 	@After
 	public void resetDb() {
 		playerRepository.deleteAll();
+		gameRepository.deleteAll();
 	}
 
 	@Test
@@ -64,5 +64,21 @@ public class PlayerServiceIntegrationTest {
 		
 		all = playerRepository.findAll();
 		assertThat(all, hasSize(1));
+	}
+	
+	@Test
+	public void whenDeleteExistingPlayer_Then_ShouldRemoveFromDb() {
+		Game existingGame = gameRepository.save(new Game("Game 1"));
+		Player player = playerRepository.save(new Player("Player 1", existingGame));
+		
+		List<Player> all = playerRepository.findAll();
+		
+		assertThat(all, hasSize(1));
+
+		playerService.deletePlayer(player.getUuid());
+		
+		all = playerRepository.findAll();
+		
+		assertThat(all, hasSize(0));
 	}
 }

@@ -1,5 +1,7 @@
 package com.logmein.cardgames.services;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,5 +30,10 @@ public class PlayerService {
 		Player newPlayer = playerRepository.save(new Player(command.name, game));
 		
 		return new PlayerView(newPlayer.getName(), newPlayer.getUuid());
+	}
+	
+	public void deletePlayer(UUID uuid) {
+		Player player = playerRepository.findOneByUuid(uuid).orElseThrow();
+		playerRepository.delete(player);
 	}
 }
