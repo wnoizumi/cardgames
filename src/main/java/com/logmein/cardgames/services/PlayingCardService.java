@@ -2,6 +2,7 @@ package com.logmein.cardgames.services;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -45,5 +46,12 @@ public class PlayingCardService {
 		Card card = dealtCard.getCard();
 		
 		return new PlayingCardView(card.getFace(), card.getSuit(), game.getUuid(), player.getUuid());
+	}
+	
+	public List<PlayingCardView> getCardsOfPlayer(UUID playerUuid) {
+		return playingCardRepository.findAllByPlayer(playerUuid)
+							.stream()
+							.map(pc -> new PlayingCardView(pc.getFace(), pc.getSuit(), pc.getGameUuid(), pc.getPlayerUuid()))
+							.collect(Collectors.toList());
 	}
 }
