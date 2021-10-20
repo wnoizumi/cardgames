@@ -29,7 +29,7 @@ public class Player {
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	private Game game;
 	
-	public Player() {
+	protected Player() {
 		this.uuid = UUID.randomUUID();
 	}
 	
