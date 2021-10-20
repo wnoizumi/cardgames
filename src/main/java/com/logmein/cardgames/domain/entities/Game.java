@@ -28,7 +28,10 @@ public class Game {
 	
 	private String name;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "player", cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.LAZY, 
+			cascade = CascadeType.ALL,
+			orphanRemoval = true,
+			mappedBy = "game") 
 	private Set<Player> players;
 	
 	public Game() {
@@ -62,6 +65,14 @@ public class Game {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Set<Player> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(Set<Player> players) {
+		this.players = players;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,7 +30,10 @@ public class Deck {
 	@Column(unique = true, nullable = false)
 	private UUID uuid;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "card")
+	@OneToMany(fetch = FetchType.LAZY,
+			cascade = CascadeType.ALL,
+			orphanRemoval = true, 
+			mappedBy = "deck")
 	private Set<Card> cards;
 	
 	public Deck() {
