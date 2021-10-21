@@ -24,6 +24,9 @@ import com.logmein.cardgames.api.commands.DeckGameAssociationCommand;
 import com.logmein.cardgames.api.views.DeckView;
 import com.logmein.cardgames.api.views.SuitSummaryView;
 import com.logmein.cardgames.api.views.PlayingCardView;
+import com.logmein.cardgames.api.views.SuitFaceSummaryView;
+import com.logmein.cardgames.domain.entities.CardFace;
+import com.logmein.cardgames.domain.entities.CardSuit;
 import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.entities.Player;
 import com.logmein.cardgames.domain.exceptions.NoPlayingCardsToDealException;
@@ -67,9 +70,12 @@ public class PlayingCardServiceIntegrationTest {
 		gameRepository.deleteAll();
 	}
 	
-	private void createGameWithOneDeck() {
+	private void createGameWithPlayer() {
 		game = gameRepository.saveAndFlush(new Game("game 1"));
 		player = playerRepository.save(new Player("Player 1", game));
+	}
+
+	private void addDeckToGame() {
 		DeckView deckView = deckService.newDeck();
 		DeckGameAssociationCommand command = new DeckGameAssociationCommand();
 		command.deckUuid = deckView.getUuid();
@@ -81,7 +87,8 @@ public class PlayingCardServiceIntegrationTest {
 	@Test
 	@Transactional
 	public void whenDealingCard_GivenAvailableCards_Then_ShouldDealTopCardToPlayer() {
-		createGameWithOneDeck();
+		createGameWithPlayer();
+		addDeckToGame();
 		
 		PlayingCardView cardView = playingCardService.dealCardToPlayer(player.getUuid());
 		assertThat(cardView, hasProperty("gameUuid", is(game.getUuid())));
@@ -103,7 +110,8 @@ public class PlayingCardServiceIntegrationTest {
 	@Test
 	@Transactional
 	public void whenGettingPlayerCards_GivenHasTwoCards_Then_ShouldReturnTwoCards() {
-		createGameWithOneDeck();
+		createGameWithPlayer();
+		addDeckToGame();
 		
 		List<PlayingCardView> cardsOfPlayer = playingCardService.getCardsOfPlayer(player.getUuid());
 		assertThat(cardsOfPlayer, hasSize(0));
@@ -118,13 +126,30 @@ public class PlayingCardServiceIntegrationTest {
 	
 	@Test
 	public void whenGetFacesSummary_Then_ShouldReturnCountOfCardsPerFace() {
-		createGameWithOneDeck();
+		createGameWithPlayer();
+		addDeckToGame();
 		
 		var summaries = playingCardService.getSuitsSummaryOfGame(game.getUuid());
 		
 		assertThat(summaries, hasSize(4));
 		for (SuitSummaryView summary : summaries) {
 			assertThat(summary, hasProperty("count", is(13L)));
+		}
+	}
+	
+	@Test
+	public void whenGetSuitFacesSummary_Then_ShouldReturnCountOfCardsPerSuitAndFace() {
+		createGameWithPlayer();
+		addDeckToGame();
+		addDeckToGame();
+		
+		var summaries = playingCardService.getSuitFacesSummaryOfGame(game.getUuid());
+		
+		assertThat(summaries, hasSize(52));
+		assertThat(summaries.get(0), hasProperty("suit", is(CardSuit.HEARTS)));
+		assertThat(summaries.get(0), hasProperty("face", is(CardFace.KING)));
+		for (SuitFaceSummaryView summary : summaries) {
+			assertThat(summary, hasProperty("count", is(2L)));
 		}
 	}
 }

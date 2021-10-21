@@ -1,5 +1,6 @@
 package com.logmein.cardgames.services;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,12 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.logmein.cardgames.api.views.SuitSummaryView;
 import com.logmein.cardgames.api.views.PlayingCardView;
+import com.logmein.cardgames.api.views.SuitFaceSummaryView;
 import com.logmein.cardgames.domain.entities.Card;
 import com.logmein.cardgames.domain.entities.CardFace;
 import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.entities.Player;
 import com.logmein.cardgames.domain.entities.PlayingCard;
 import com.logmein.cardgames.domain.exceptions.NoPlayingCardsToDealException;
+import com.logmein.cardgames.domain.projections.SuitFaceProjection;
 import com.logmein.cardgames.domain.repositories.PlayerRepository;
 import com.logmein.cardgames.domain.repositories.PlayingCardRepository;
 
@@ -69,6 +72,15 @@ public class PlayingCardService {
 		return countPerFace.entrySet()
 							.stream()
 							.map(es -> new SuitSummaryView(es.getKey(), es.getValue()))
+							.collect(Collectors.toList());
+	}
+	
+	public List<SuitFaceSummaryView> getSuitFacesSummaryOfGame(UUID gameUuid) {
+		List<SuitFaceProjection> projections = playingCardRepository.findAllSuitFaceSummariesByGame(gameUuid);
+		
+		return projections.stream()
+							.map(p -> new SuitFaceSummaryView(p.getSuit(), p.getFace(), p.getCount()))
+							.sorted(Comparator.reverseOrder())
 							.collect(Collectors.toList());
 	}
 }

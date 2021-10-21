@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.logmein.cardgames.domain.entities.Player;
 import com.logmein.cardgames.domain.entities.PlayingCard;
 import com.logmein.cardgames.domain.projections.PlayingCardProjection;
+import com.logmein.cardgames.domain.projections.SuitFaceProjection;
 
 @Repository
 public interface PlayingCardRepository extends JpaRepository<PlayingCard, Long> {
@@ -33,4 +34,10 @@ public interface PlayingCardRepository extends JpaRepository<PlayingCard, Long> 
 	@Query("SELECT pc FROM PlayingCard pc JOIN FETCH pc.player p JOIN FETCH pc.game g "
 			+ "JOIN FETCH pc.card c WHERE g.uuid = :gameuuid")
 	List<PlayingCard> findAllOnHandByGame(@Param("gameuuid") UUID gameUuid);
+
+	@Query("SELECT NEW com.logmein.cardgames.domain.projections.SuitFaceProjection(c.face, c.suit, COUNT(c.id)) "
+			+ "FROM PlayingCard pc JOIN pc.card c JOIN pc.game g "
+			+ "WHERE g.uuid = :gameuuid " 
+			+ "GROUP BY c.face, c.suit ")
+	List<SuitFaceProjection> findAllSuitFaceSummariesByGame(@Param("gameuuid") UUID gameUuid);
 }

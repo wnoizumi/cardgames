@@ -15,13 +15,13 @@ public enum CardFace {
 	QUEEN(12), 
 	KING(13);
 	
-	private final int faceValue;
+	private final Integer faceValue;
 	
-	private CardFace(int faceValue) {
+	private CardFace(Integer faceValue) {
 		this.faceValue = faceValue;
 	}
 	
-	public int getFaceValue() {
+	public Integer getFaceValue() {
 		return this.faceValue;
 	}
 }

@@ -1,15 +1,15 @@
 package com.logmein.cardgames.domain.entities;
 
 public enum CardSuit {
-	HEARTS(1), SPADES(2), CLUBS(3), DIAMONDS(4);
+	HEARTS(4), SPADES(3), CLUBS(2), DIAMONDS(1);
 
-	private final int priority;
+	private final Integer weight;
 
-	private CardSuit(int priority) {
-		this.priority = priority;
+	private CardSuit(Integer weight) {
+		this.weight = weight;
 	}
 	
-	public int getPriority() {
-		return this.priority;
+	public Integer getWeight() {
+		return this.weight;
 	}
 }
