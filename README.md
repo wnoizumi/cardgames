@@ -90,7 +90,7 @@ To startup the project in an embedded server, please follow the steps below:
    ```sh
    mvnw spring-boot:run
    ```
-2. The API will be available at 8080 port. In case you need to use another port, please change the server.port property in the application.properties file
+2. The API will be available at 8080 port. In case you need to use another port, please change the server.port property in the [application.properties](https://github.com/wnoizumi/cardgames/blob/main/src/main/resources/application.properties) file
    ```sh
    server.port=8080
    ```
