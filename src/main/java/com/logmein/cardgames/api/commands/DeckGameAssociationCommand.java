@@ -8,4 +8,10 @@ public class DeckGameAssociationCommand {
 
 	@NotNull
 	public UUID deckUuid;
+
+	public DeckGameAssociationCommand() {}
+	
+	public DeckGameAssociationCommand(@NotNull UUID deckUuid) {
+		this.deckUuid = deckUuid;
+	}
 }
