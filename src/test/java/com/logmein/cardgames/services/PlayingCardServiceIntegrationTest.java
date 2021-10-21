@@ -1,12 +1,19 @@
 package com.logmein.cardgames.services;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -151,5 +158,28 @@ public class PlayingCardServiceIntegrationTest {
 		for (SuitFaceSummaryView summary : summaries) {
 			assertThat(summary, hasProperty("count", is(2L)));
 		}
+	}
+	
+	@Test
+	public void whenShuffleGame_Then_ShouldChangeCardsShufflePositions() {
+		createGameWithPlayer();
+		addDeckToGame();
+		
+		var previousOrder = playingCardRepository.findAllAvailableByGame(game.getUuid())
+							.stream()
+							.sorted((a, b) -> a.getShufflePosition().compareTo(b.getShufflePosition()))
+							.map(pc -> pc.getId())
+							.collect(Collectors.toList());
+		
+		playingCardService.shuffleCardsOfGame(game.getUuid());
+		
+		var newOrder = playingCardRepository.findAllAvailableByGame(game.getUuid())
+				.stream()
+				.sorted((a, b) -> a.getShufflePosition().compareTo(b.getShufflePosition()))
+				.map(pc -> pc.getId())
+				.collect(Collectors.toList());
+		
+		//TODO check how to improve this test
+		assertThat(newOrder, not(contains(previousOrder)));
 	}
 }

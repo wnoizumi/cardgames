@@ -1,21 +1,20 @@
 package com.logmein.cardgames.services;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.logmein.cardgames.api.views.SuitSummaryView;
 import com.logmein.cardgames.api.views.PlayingCardView;
 import com.logmein.cardgames.api.views.SuitFaceSummaryView;
+import com.logmein.cardgames.api.views.SuitSummaryView;
 import com.logmein.cardgames.domain.entities.Card;
-import com.logmein.cardgames.domain.entities.CardFace;
 import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.entities.Player;
 import com.logmein.cardgames.domain.entities.PlayingCard;
@@ -82,5 +81,20 @@ public class PlayingCardService {
 							.map(p -> new SuitFaceSummaryView(p.getSuit(), p.getFace(), p.getCount()))
 							.sorted(Comparator.reverseOrder())
 							.collect(Collectors.toList());
+	}
+	
+	public void shuffleCardsOfGame(UUID gameUuid) {
+		List<PlayingCard> cardsToShuffle = playingCardRepository.findAllAvailableByGame(gameUuid);
+		List<PlayingCard> shuffledCards = new ArrayList<>();
+		Random rand = new Random();
+		int currentPosition = 1;
+		while (cardsToShuffle.size() > 0) {
+			int nextIndex = rand.nextInt(cardsToShuffle.size());
+			PlayingCard card = cardsToShuffle.remove(nextIndex);
+			card.setShufflePosition(currentPosition);
+			shuffledCards.add(card);
+			currentPosition++;
+		}
+		playingCardRepository.saveAll(shuffledCards);
 	}
 }
