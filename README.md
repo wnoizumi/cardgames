@@ -94,15 +94,35 @@ To startup the project in an embedded server, please follow the steps below:
    ```sh
    server.port=8080
    ```
-3. Explore the API using a web browser or another tool (e.g., curl, postman, etc)
+3. Explore the API using swagger or another tool (e.g., curl, postman, etc)
   - All the APIs will be under [localhost:8080/api](http://localhost:8080/api):
     - [localhost:8080/api/games](http://localhost:8080/api/games)  
     - [localhost:8080/api/decks](http://localhost:8080/api/decks)
-  - To navigate the API using swagger, pleace access: [localhost:8080/swagger-ui](http://localhost:8080/swagger-ui);  
+    - [localhost:8080/api/players](http://localhost:8080/api/players)
+  - (Recommended) To navigate the API using swagger, pleace access: [localhost:8080/swagger-ui](http://localhost:8080/swagger-ui);  
   - To inspect the H2 database, pleace access: [localhost:8080/h2-console](http://localhost:8080/h2-console). The database credentials are defined in the [application.properties](https://github.com/wnoizumi/cardgames/blob/main/src/main/resources/application.properties) file.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+<!-- MAPPING OF FEATURES -->
+## Features
+
+Next, I present a mapping of features to the API. 
+
+- **Create a game:** POST Request to [localhost:8080/api/games](http://localhost:8080/api/games)  
+- **Delete a game:** DELETE Request to [localhost:8080/api/games/{uuid}](http://localhost:8080/api/games/{uuid}) 
+- **Create a deck:** POST Request to [localhost:8080/api/decks](http://localhost:8080/api/decks) 
+- **Add a deck to a game deck:** POST Request to [localhost:8080/api/games/{uuid}/decks](http://localhost:8080/api/games/{uuid}/decks) 
+- **Add player to a game:** POST Request to [localhost:8080/api/players](http://localhost:8080/api/players) 
+- **Remove player from a game:** DELETE Request to [localhost:8080/api/players/{uuid}](http://localhost:8080/api/players/{uuid}) 
+- **Deal a card to a player in a game from the game deck:** POST Request to [localhost:8080/api/players/{uuid}/cards](http://localhost:8080/api/players/{uuid}/cards) 
+- **Get the list of cards for a player:** GET Request to [localhost:8080/api/players/{uuid}/cards](http://localhost:8080/api/players/{uuid}/cards) 
+- **Get the list of players in a game along with the total added value of all the cards each player holds:** GET Request to [localhost:8080/api/players/](http://localhost:8080/api/players/) passing the game uuid as a query parameter
+- **Get the count of how many cards per suit are left undealt in the game deck:**  GET Request to [localhost:8080/api/games/{uuid}/suits](http://localhost:8080/api/games/{uuid}/suits)
+- **Get the count of each card (suit and value) remaining in the game deck sorted by suit and face value from high value to low value:** GET Request to [localhost:8080/api/games/{uuid}/suitsFaces](http://localhost:8080/api/games/{uuid}/suitsFaces)
+- **Shuffle the game deck:**  PATCH Request to [localhost:8080/api/games/{uuid}](http://localhost:8080/api/games/{uuid}) passing shuffle as the operation in the body 
+
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- LIMITATIONS -->
 ## Limitations
