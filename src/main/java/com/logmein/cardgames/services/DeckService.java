@@ -10,7 +10,6 @@ import com.logmein.cardgames.api.views.DeckView;
 import com.logmein.cardgames.api.views.GameView;
 import com.logmein.cardgames.domain.builders.DeckBuilder;
 import com.logmein.cardgames.domain.entities.Deck;
-import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.exceptions.CannotDeleteDeckOfAGameException;
 import com.logmein.cardgames.domain.repositories.DeckRepository;
 

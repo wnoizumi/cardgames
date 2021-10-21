@@ -58,7 +58,8 @@ public class PlayerService {
 		
 		return players.stream()
 					.map(p -> new PlayerView(p.getName(), p.getUuid(), 
-							calculateHandValue(cardsPerPlayer.get(p)))
+							calculateHandValue(cardsPerPlayer.get(p)),
+							new GameView(p.getGame().getUuid(), p.getGame().getName()))
 						)
 					.sorted(Comparator.reverseOrder())
 					.collect(Collectors.toList());

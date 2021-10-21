@@ -14,6 +14,13 @@ public class PlayerView implements Comparable<PlayerView> {
 		this.uuid = uuid;
 		this.handValue = handValue;
 	}
+	
+	public PlayerView(String name, UUID uuid, Integer handValue, GameView game) {
+		this.name = name;
+		this.uuid = uuid;
+		this.handValue = handValue;
+		this.game = game;
+	}
 
 	public String getName() {
 		return name;

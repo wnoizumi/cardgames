@@ -37,5 +37,4 @@ public class PlayerViewAssembler implements SimpleRepresentationModelAssembler<P
 			resources.add(linkTo(methodOn(PlayersApi.class).playersOfGame(gameView.getUuid())).withSelfRel());
 		}
 	}
-
 }

@@ -1,10 +1,7 @@
 package com.logmein.cardgames;
 
-import java.util.Arrays;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.logmein.cardgames.api.commands.AddPlayerCommand;
@@ -38,7 +35,7 @@ public class DatabaseInitializer implements CommandLineRunner {
 		
 		GameView gameOne = gameService.newGame(new CreateGameCommand("Game 1"));
 		GameView gameTwo = gameService.newGame(new CreateGameCommand("Game 2"));
-		GameView gameThree = gameService.newGame(new CreateGameCommand("Game 2"));
+		GameView gameThree = gameService.newGame(new CreateGameCommand("Game 3"));
 		
 		gameService.addDeckToGame(gameOne.getUuid(), new DeckGameAssociationCommand(deckOne.getUuid()));
 		gameService.addDeckToGame(gameOne.getUuid(), new DeckGameAssociationCommand(deckTwo.getUuid()));
