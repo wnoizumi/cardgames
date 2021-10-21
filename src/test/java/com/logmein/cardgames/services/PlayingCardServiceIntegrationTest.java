@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.logmein.cardgames.CardgamesApplication;
 import com.logmein.cardgames.api.commands.DeckGameAssociationCommand;
 import com.logmein.cardgames.api.views.DeckView;
+import com.logmein.cardgames.api.views.SuitSummaryView;
 import com.logmein.cardgames.api.views.PlayingCardView;
 import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.entities.Player;
@@ -113,5 +114,17 @@ public class PlayingCardServiceIntegrationTest {
 		cardsOfPlayer = playingCardService.getCardsOfPlayer(player.getUuid());
 		assertThat(cardsOfPlayer, hasSize(2));
 		//TODO check if the returned cards are equal to dealed cards
+	}
+	
+	@Test
+	public void whenGetFacesSummary_Then_ShouldReturnCountOfCardsPerFace() {
+		createGameWithOneDeck();
+		
+		var summaries = playingCardService.getSuitsSummaryOfGame(game.getUuid());
+		
+		assertThat(summaries, hasSize(4));
+		for (SuitSummaryView summary : summaries) {
+			assertThat(summary, hasProperty("count", is(13L)));
+		}
 	}
 }

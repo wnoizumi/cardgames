@@ -1,15 +1,19 @@
 package com.logmein.cardgames.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.logmein.cardgames.api.views.SuitSummaryView;
 import com.logmein.cardgames.api.views.PlayingCardView;
 import com.logmein.cardgames.domain.entities.Card;
+import com.logmein.cardgames.domain.entities.CardFace;
 import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.entities.Player;
 import com.logmein.cardgames.domain.entities.PlayingCard;
@@ -52,6 +56,19 @@ public class PlayingCardService {
 		return playingCardRepository.findAllByPlayer(playerUuid)
 							.stream()
 							.map(pc -> new PlayingCardView(pc.getFace(), pc.getSuit(), pc.getGameUuid(), pc.getPlayerUuid()))
+							.collect(Collectors.toList());
+	}
+	
+	public List<SuitSummaryView> getSuitsSummaryOfGame(UUID gameUuid) {
+		//TODO perform grouping in the db and return a projection
+		List<PlayingCard> cards = playingCardRepository.findAllAvailableByGame(gameUuid);
+		var countPerFace = cards.stream()
+							.map(c -> c.getCard())
+							.collect(Collectors.groupingBy(Card::getSuit, Collectors.counting()));
+		
+		return countPerFace.entrySet()
+							.stream()
+							.map(es -> new SuitSummaryView(es.getKey(), es.getValue()))
 							.collect(Collectors.toList());
 	}
 }
