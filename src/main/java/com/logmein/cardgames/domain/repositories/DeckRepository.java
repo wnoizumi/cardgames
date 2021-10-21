@@ -16,4 +16,6 @@ public interface DeckRepository extends JpaRepository<Deck, Long> {
 	@Query("select d from Deck d left join fetch d.cards c left join fetch d.game g where d.uuid = :uuid")
 	Optional<Deck> findOneWithRelationsByUuid(@Param("uuid") UUID uuid);
 
+	@Query("select d from Deck d left join fetch d.game g where d.uuid = :uuid")
+	Optional<Deck> findOneByWithGameUuid(UUID uuid);
 }

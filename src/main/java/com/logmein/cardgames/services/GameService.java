@@ -2,7 +2,9 @@ package com.logmein.cardgames.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,5 +67,17 @@ public class GameService {
 		playingCardRepository.saveAll(playingCards);
 		
 		return new GameView(game.getUuid(), game.getName());
+	}
+
+	public List<GameView> all() {
+		return gameRepository.findAll()
+							.stream()
+							.map(g -> new GameView(g.getUuid(), g.getName()))
+							.collect(Collectors.toList());
+	}
+
+	public GameView one(UUID uuid) {
+		Game game = gameRepository.findOneByUuid(uuid).orElseThrow();
+		return new GameView(game.getUuid(), game.getName()); 
 	}
 }

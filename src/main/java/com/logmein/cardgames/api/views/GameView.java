@@ -2,6 +2,9 @@ package com.logmein.cardgames.api.views;
 
 import java.util.UUID;
 
+import org.springframework.hateoas.server.core.Relation;
+
+@Relation(collectionRelation = "games")
 public class GameView {
 	
 	private UUID uuid;
