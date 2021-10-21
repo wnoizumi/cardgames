@@ -81,7 +81,7 @@ To get a local copy up and running follow these simple example steps.
 
 
 <!-- USAGE -->
-## Usage
+## Basic Usage
 
 For the sake of simplicity, the project is configured to run with a development profile using the in-memory H2 database. 
 To startup the project in an embedded server, please follow the steps below:
@@ -90,11 +90,16 @@ To startup the project in an embedded server, please follow the steps below:
    ```sh
    mvnw spring-boot:run
    ```
-2. The API will be available at 8080 port. In case you need to use another port, please change the server.port property in the [application.properties](https://github.com/wnoizumi/cardgames/blob/main/src/main/resources/application.properties) file
+2. The API will be available at 8080 port. In case you need to use another port, please change the server.port property in the [application.properties](https://github.com/wnoizumi/cardgames/blob/main/src/main/resources/application.properties) file.
    ```sh
    server.port=8080
    ```
-3. Explore the API using  a web browser or another tool (e.g., curl, postman, etc)
+3. Explore the API using a web browser or another tool (e.g., curl, postman, etc)
+  - All the APIs will be under [localhost:8080/api](http://localhost:8080/api):
+    - [localhost:8080/api/games](http://localhost:8080/api/games)  
+    - [localhost:8080/api/decks](http://localhost:8080/api/decks)
+  - To navigate the API using swagger, pleace access: [localhost:8080/swagger-ui](http://localhost:8080/swagger-ui);  
+  - To inspect the H2 database, pleace access: [localhost:8080/h2-console](http://localhost:8080/h2-console). The database credentials are defined in the [application.properties](https://github.com/wnoizumi/cardgames/blob/main/src/main/resources/application.properties) file.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
