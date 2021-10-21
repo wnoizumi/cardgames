@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.logmein.cardgames.domain.entities.Player;
 import com.logmein.cardgames.domain.entities.PlayingCard;
 import com.logmein.cardgames.domain.projections.PlayingCardProjection;
 
@@ -28,4 +29,8 @@ public interface PlayingCardRepository extends JpaRepository<PlayingCard, Long> 
 			+ "FROM PlayingCard pc JOIN pc.card c JOIN pc.game g JOIN pc.player p "
 			+ "WHERE p.uuid = :playeruuid")
 	List<PlayingCardProjection> findAllByPlayer(@Param("playeruuid") UUID playerUuid);
+	
+	@Query("SELECT pc FROM PlayingCard pc JOIN FETCH pc.player p JOIN FETCH pc.game g "
+			+ "JOIN FETCH pc.card c WHERE g.uuid = :gameuuid")
+	List<PlayingCard> findAllOnHandByGame(@Param("gameuuid") UUID gameUuid);
 }

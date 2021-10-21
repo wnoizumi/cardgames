@@ -1,5 +1,7 @@
 package com.logmein.cardgames.domain.entities;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -33,18 +35,18 @@ public class Game {
 			cascade = CascadeType.ALL,
 			orphanRemoval = true,
 			mappedBy = "game") 
-	private Set<Player> players;
+	private Set<Player> players = new HashSet<>();
 	
 	@OneToMany(fetch = FetchType.LAZY,
 			cascade = CascadeType.ALL,
 			orphanRemoval = true,
 			mappedBy = "game")
-	private Set<PlayingCard> playingCards;
+	private Set<PlayingCard> playingCards = new HashSet<>();
 	
 	@OneToMany(fetch = FetchType.LAZY,
 			cascade = CascadeType.ALL,
 			mappedBy = "game")
-	private List<Deck> decks;
+	private List<Deck> decks = new ArrayList<>();
 	
 	public Game() {
 		this.uuid = UUID.randomUUID();

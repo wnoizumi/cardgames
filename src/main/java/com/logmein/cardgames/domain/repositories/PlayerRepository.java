@@ -1,5 +1,6 @@
 package com.logmein.cardgames.domain.repositories;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,5 +18,7 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 	
 	@Query("select p from Player p left join fetch p.game g where p.uuid = :uuid")
 	Optional<Player> findOneWithGameByUuid(@Param("uuid") UUID uuid);
-	
+
+	@Query("select p from Player p left join fetch p.game g where g.uuid = :gameuuid")
+	List<Player> findAllByGame(@Param("gameuuid") UUID gameUuid);
 }

@@ -1,6 +1,7 @@
 package com.logmein.cardgames.domain.entities;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class Deck {
 			cascade = CascadeType.ALL,
 			orphanRemoval = true, 
 			mappedBy = "deck")
-	private Set<Card> cards;
+	private Set<Card> cards = new HashSet<>();
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Game game;
@@ -66,7 +67,7 @@ public class Deck {
 	}
 
 	public void setCards(Set<Card> cards) {
-		if (this.cards != null)
+		if (this.cards != null && this.cards.size() > 0)
 			throw new InvalidDeckOperation("The cards of a deck should not be changed");
 		this.cards = cards;
 	}

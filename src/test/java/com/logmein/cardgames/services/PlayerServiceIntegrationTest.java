@@ -17,10 +17,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.logmein.cardgames.CardgamesApplication;
 import com.logmein.cardgames.api.commands.AddPlayerCommand;
+import com.logmein.cardgames.api.commands.DeckGameAssociationCommand;
+import com.logmein.cardgames.api.views.DeckView;
 import com.logmein.cardgames.api.views.PlayerView;
+import com.logmein.cardgames.api.views.PlayingCardView;
 import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.entities.Player;
 import com.logmein.cardgames.domain.repositories.GameRepository;
@@ -40,7 +44,16 @@ public class PlayerServiceIntegrationTest {
 	private PlayerRepository playerRepository;
 	
 	@Autowired
+	private GameService gameService;
+	
+	@Autowired
 	private PlayerService playerService;
+	
+	@Autowired
+	private DeckService deckService;
+	
+	@Autowired
+	private PlayingCardService playingCardService;
 	
 	@After
 	public void resetDb() {
@@ -80,5 +93,35 @@ public class PlayerServiceIntegrationTest {
 		all = playerRepository.findAll();
 		
 		assertThat(all, hasSize(0));
+	}
+	
+	@Test
+	@Transactional
+	public void whenGettingPlayersOfGame_GivenTwoPlayers_Then_ShouldReturnPlayersSortedByHand() {
+		Game game = gameRepository.saveAndFlush(new Game("game 1"));
+		Player playerOne = playerRepository.save(new Player("Player 1", game));
+		Player playerTwo = playerRepository.save(new Player("Player 2", game));
+		
+		DeckView deckView = deckService.newDeck();
+		DeckGameAssociationCommand command = new DeckGameAssociationCommand();
+		command.deckUuid = deckView.getUuid();
+		command.gameUuid = game.getUuid();
+		
+		gameService.addDeckToGame(command);
+		
+		PlayingCardView cardViewOne = playingCardService.dealCardToPlayer(playerOne.getUuid());
+		PlayingCardView cardViewTwo = playingCardService.dealCardToPlayer(playerOne.getUuid());
+		
+		List<PlayerView> playersOfGame = playerService.getPlayersOfGame(game.getUuid());
+		
+		int handValuePlayerOne = cardViewOne.getFace().getFaceValue() + cardViewTwo.getFace().getFaceValue();
+		
+		assertThat(playersOfGame, hasSize(2));
+		assertThat(playersOfGame.get(0), hasProperty("handValue", is(handValuePlayerOne)));
+		assertThat(playersOfGame.get(0), hasProperty("uuid", is(playerOne.getUuid())));
+		assertThat(playersOfGame.get(0), hasProperty("name", is(playerOne.getName())));
+		assertThat(playersOfGame.get(1), hasProperty("handValue", is(0)));
+		assertThat(playersOfGame.get(1), hasProperty("uuid", is(playerTwo.getUuid())));
+		assertThat(playersOfGame.get(1), hasProperty("name", is(playerTwo.getName())));
 	}
 }
