@@ -149,7 +149,7 @@ public class PlayingCardServiceIntegrationTest {
 		addDeckToGame();
 		addDeckToGame();
 		
-		var summaries = playingCardService.getSuitFacesSummaryOfGame(game.getUuid());
+		var summaries = playingCardService.getSuitFacesSummariesOfGame(game.getUuid());
 		
 		assertThat(summaries, hasSize(52));
 		assertThat(summaries.get(0), hasProperty("suit", is(CardSuit.HEARTS)));

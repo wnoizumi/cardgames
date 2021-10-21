@@ -21,7 +21,7 @@ import com.logmein.cardgames.services.DeckService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "Games")
+@Tag(name = "Decks")
 @RestController
 @RequestMapping(path = "/api/decks")
 public class DecksApi {

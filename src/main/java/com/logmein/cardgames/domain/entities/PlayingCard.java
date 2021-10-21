@@ -22,7 +22,7 @@ public class PlayingCard {
 	@Column(unique = true, nullable = false)
 	private UUID uuid;
 	
-	@OneToOne(fetch = FetchType.LAZY, optional = false)
+	@OneToOne(fetch = FetchType.EAGER, optional = false)
 	private Card card;
 	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)

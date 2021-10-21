@@ -1,5 +1,7 @@
 package com.logmein.cardgames.api.views;
 
+import java.util.UUID;
+
 import com.logmein.cardgames.domain.entities.CardFace;
 import com.logmein.cardgames.domain.entities.CardSuit;
 
@@ -8,11 +10,13 @@ public class SuitFaceSummaryView implements Comparable<SuitFaceSummaryView> {
 	private CardSuit suit;
 	private CardFace face;
 	private Long count;
+	private UUID gameUuid;
 
-	public SuitFaceSummaryView(CardSuit suit, CardFace face, Long count) {
+	public SuitFaceSummaryView(CardSuit suit, CardFace face, Long count, UUID gameUuid) {
 		this.suit = suit;
 		this.face = face;
 		this.count = count;
+		this.gameUuid = gameUuid;
 	}
 
 	public CardSuit getSuit() {
@@ -25,6 +29,10 @@ public class SuitFaceSummaryView implements Comparable<SuitFaceSummaryView> {
 	
 	public Long getCount() {
 		return count;
+	}
+
+	public UUID getGameUuid() {
+		return gameUuid;
 	}
 
 	@Override

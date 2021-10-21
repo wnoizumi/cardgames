@@ -15,6 +15,8 @@ import com.logmein.cardgames.api.views.PlayingCardView;
 import com.logmein.cardgames.api.views.SuitFaceSummaryView;
 import com.logmein.cardgames.api.views.SuitSummaryView;
 import com.logmein.cardgames.domain.entities.Card;
+import com.logmein.cardgames.domain.entities.CardFace;
+import com.logmein.cardgames.domain.entities.CardSuit;
 import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.entities.Player;
 import com.logmein.cardgames.domain.entities.PlayingCard;
@@ -70,15 +72,15 @@ public class PlayingCardService {
 		
 		return countPerFace.entrySet()
 							.stream()
-							.map(es -> new SuitSummaryView(es.getKey(), es.getValue()))
+							.map(es -> new SuitSummaryView(es.getKey(), es.getValue(), gameUuid))
 							.collect(Collectors.toList());
 	}
 	
-	public List<SuitFaceSummaryView> getSuitFacesSummaryOfGame(UUID gameUuid) {
+	public List<SuitFaceSummaryView> getSuitFacesSummariesOfGame(UUID gameUuid) {
 		List<SuitFaceProjection> projections = playingCardRepository.findAllSuitFaceSummariesByGame(gameUuid);
 		
 		return projections.stream()
-							.map(p -> new SuitFaceSummaryView(p.getSuit(), p.getFace(), p.getCount()))
+							.map(p -> new SuitFaceSummaryView(p.getSuit(), p.getFace(), p.getCount(), gameUuid))
 							.sorted(Comparator.reverseOrder())
 							.collect(Collectors.toList());
 	}
@@ -98,7 +100,37 @@ public class PlayingCardService {
 		playingCardRepository.saveAll(shuffledCards);
 	}
 
-	public PlayingCardView one(UUID cardUuid) {
-		return null;
+	public PlayingCardView one(UUID uuid) {
+		PlayingCard pc = playingCardRepository.findOneWithRelationsByUuid(uuid).orElseThrow();
+		Card card = pc.getCard();
+		UUID playerUuid = pc.getPlayer() != null ? pc.getPlayer().getUuid() : null;
+		return new PlayingCardView(card.getFace(), card.getSuit(), uuid, pc.getGame().getUuid(), playerUuid);
+	}
+
+	public SuitSummaryView getSuitSummaryOfGame(UUID uuid, CardSuit suit) {
+		List<SuitSummaryView> list = this.getSuitsSummaryOfGame(uuid);
+		var result = list.stream()
+					.filter(e -> e.getSuit().equals(suit))
+					.collect(Collectors.toList());
+		
+		if (result.size() == 1) {
+			return result.get(0);
+		}
+		
+		return new SuitSummaryView(suit, 0L, uuid);
+	}
+
+	public SuitFaceSummaryView getSuitFaceSummaryOfGame(UUID uuid, CardSuit suit, CardFace face) {
+		List<SuitFaceProjection> projections = playingCardRepository.findAllSuitFaceSummariesByGame(uuid);
+		List<SuitFaceProjection> result = projections.stream()
+					.filter(e -> e.getSuit().equals(suit))
+					.collect(Collectors.toList());
+		
+		if (result.size() == 1) {
+			SuitFaceProjection projection = result.get(0);
+			return new SuitFaceSummaryView(projection.getSuit(), projection.getFace(), projection.getCount(), uuid);
+		}
+		
+		return new SuitFaceSummaryView(suit, face, 0L, uuid);
 	}
 }

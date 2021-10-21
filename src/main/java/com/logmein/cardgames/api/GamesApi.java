@@ -1,5 +1,6 @@
 package com.logmein.cardgames.api;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.validation.Valid;
@@ -18,17 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.logmein.cardgames.api.assemblers.DeckViewAssembler;
 import com.logmein.cardgames.api.assemblers.GameViewAssembler;
-import com.logmein.cardgames.api.assemblers.PlayerViewAssembler;
 import com.logmein.cardgames.api.assemblers.PlayingCardViewAssembler;
-import com.logmein.cardgames.api.commands.AddPlayerCommand;
+import com.logmein.cardgames.api.assemblers.SuitFacesSummaryViewAssembler;
+import com.logmein.cardgames.api.assemblers.SuitSummaryViewAssembler;
 import com.logmein.cardgames.api.commands.CreateGameCommand;
 import com.logmein.cardgames.api.commands.DeckGameAssociationCommand;
 import com.logmein.cardgames.api.views.DeckView;
 import com.logmein.cardgames.api.views.GameView;
-import com.logmein.cardgames.api.views.PlayerView;
 import com.logmein.cardgames.api.views.PlayingCardView;
+import com.logmein.cardgames.api.views.SuitFaceSummaryView;
+import com.logmein.cardgames.api.views.SuitSummaryView;
+import com.logmein.cardgames.domain.entities.CardFace;
+import com.logmein.cardgames.domain.entities.CardSuit;
 import com.logmein.cardgames.services.GameService;
-import com.logmein.cardgames.services.PlayerService;
 import com.logmein.cardgames.services.PlayingCardService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,23 +42,25 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class GamesApi {
 	
 	private GameService gameService;
-	private PlayerService playerService;
 	private PlayingCardService playingCardService;
 	private GameViewAssembler gameViewAssembler;
 	private DeckViewAssembler deckViewAssembler;
-	private PlayerViewAssembler playerViewAssembler;
 	private PlayingCardViewAssembler playingCardViewAssembler;
+	private SuitSummaryViewAssembler suitSummaryViewAssembler;
+	private SuitFacesSummaryViewAssembler suitFacesSummaryViewAssembler;
 	
-	public GamesApi(GameService gameService, PlayerService playerService, PlayingCardService playingCardService,
+	public GamesApi(GameService gameService, PlayingCardService playingCardService,
 			GameViewAssembler gameViewAssembler, DeckViewAssembler deckViewAssembler,
-			PlayerViewAssembler playerViewAssembler, PlayingCardViewAssembler playingCardViewAssembler) {
+			PlayingCardViewAssembler playingCardViewAssembler, 
+			SuitSummaryViewAssembler suitSummaryViewAssembler,
+			SuitFacesSummaryViewAssembler suitFacesSummaryViewAssembler) {
 		this.gameService = gameService;
-		this.playerService = playerService;
 		this.playingCardService = playingCardService;
 		this.gameViewAssembler = gameViewAssembler;
 		this.deckViewAssembler = deckViewAssembler;
-		this.playerViewAssembler = playerViewAssembler;
 		this.playingCardViewAssembler = playingCardViewAssembler;
+		this.suitSummaryViewAssembler = suitSummaryViewAssembler;
+		this.suitFacesSummaryViewAssembler = suitFacesSummaryViewAssembler;
 	}
 
 	@PostMapping
@@ -89,44 +94,34 @@ public class GamesApi {
 		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
 	}
 
-	@PostMapping("{uuid}/players")
-	public ResponseEntity<?> addPlayer(@PathVariable UUID uuid, @RequestBody @Valid AddPlayerCommand addPlayerCommand) {
-		EntityModel<PlayerView> entityModel = playerViewAssembler.toModel(playerService.addPlayerToGame(addPlayerCommand));
-		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
-	}
-	
-	@PostMapping("{uuid}/players/{playeruuid}")
-	public EntityModel<PlayerView> onePlayer(@PathVariable(name = "uuid") UUID uuid,
-			@PathVariable(name = "playeruuid") UUID playerUuid) {
-		
-		return playerViewAssembler.toModel(playerService.one(playerUuid));
-	}
-
-	@DeleteMapping("{uuid}/players/{playeruuid}")
-	public ResponseEntity<?> removePlayer(@PathVariable(name = "uuid") UUID uuid,
-			@PathVariable(name = "playeruuid") UUID playerUuid) {
-		 playerService.deletePlayer(playerUuid);
-		return ResponseEntity.ok().build();
-	}
-	
-	@PostMapping("{uuid}/players/{playeruuid}/cards")
-	public ResponseEntity<?> dealCard(@PathVariable(name = "uuid") UUID uuid,
-			@PathVariable(name = "playeruuid") UUID playerUuid) {
-		PlayingCardView cardView = playingCardService.dealCardToPlayer(playerUuid);
-		EntityModel<PlayingCardView> entityModel = playingCardViewAssembler.toModel(cardView);
-		return ResponseEntity.created(entityModel.getRequiredLink(IanaLinkRelations.SELF).toUri()).body(entityModel);
-	}
-	
-	@GetMapping("{uuid}/players/{playeruuid}/cards")
-	public ResponseEntity<CollectionModel<EntityModel<PlayingCardView>>> cardsOfPlayer(@PathVariable(name = "uuid") UUID uuid,
-			@PathVariable(name = "playeruuid") UUID playerUuid) {
-		CollectionModel<EntityModel<PlayingCardView>> collectionModel = playingCardViewAssembler.toCollectionModel(playingCardService.getCardsOfPlayer(playerUuid));
-		return ResponseEntity.ok(collectionModel);
-	}
-	
 	@GetMapping("{uuid}/cards/{carduuid}")
 	public EntityModel<PlayingCardView> playingCard(@PathVariable(name = "uuid") UUID uuid,
 			@PathVariable(name = "carduuid") UUID cardUuid) {
 		return playingCardViewAssembler.toModel(playingCardService.one(cardUuid));
 	}
+	
+	@GetMapping("{uuid}/suits")
+	public ResponseEntity<CollectionModel<EntityModel<SuitSummaryView>>> suitsSummaries(@PathVariable(name = "uuid") UUID uuid) {
+		List<SuitSummaryView> suitsSummaryOfGame = playingCardService.getSuitsSummaryOfGame(uuid);
+		return ResponseEntity.ok(suitSummaryViewAssembler.toCollectionModel(suitsSummaryOfGame));
+	}
+	
+	@GetMapping("{uuid}/suits/{suit}")
+	public EntityModel<SuitSummaryView> suitSummary(@PathVariable(name = "uuid") UUID uuid, @PathVariable(name = "suit") CardSuit suit) {
+		SuitSummaryView suitSummary = playingCardService.getSuitSummaryOfGame(uuid, suit);
+		return suitSummaryViewAssembler.toModel(suitSummary);
+	}
+
+	@GetMapping("{uuid}/suitsFaces")
+	public ResponseEntity<CollectionModel<EntityModel<SuitFaceSummaryView>>> suitsFacesSummaries(@PathVariable(name = "uuid") UUID uuid) {
+		List<SuitFaceSummaryView> suitsSummaryOfGame = playingCardService.getSuitFacesSummariesOfGame(uuid);
+		return ResponseEntity.ok(suitFacesSummaryViewAssembler.toCollectionModel(suitsSummaryOfGame));
+	}
+	
+	@GetMapping("{uuid}/suitsFaces/{suit}/{face}")
+	public EntityModel<SuitFaceSummaryView> suitFaceSummary(@PathVariable(name = "uuid") UUID uuid, @PathVariable(name = "suit") CardSuit suit, @PathVariable(name = "face") CardFace face) {
+		SuitFaceSummaryView suitSummary = playingCardService.getSuitFaceSummaryOfGame(uuid, suit, face);
+		return suitFacesSummaryViewAssembler.toModel(suitSummary);
+	}
+	
 }
