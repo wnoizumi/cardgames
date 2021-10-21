@@ -9,12 +9,14 @@ public class PlayingCardView {
 	
 	private CardFace face;
 	private CardSuit suit;
+	private UUID uuid;
 	private UUID gameUuid;
 	private UUID playerUuid;
 	
-	public PlayingCardView(CardFace face, CardSuit suit, UUID gameUuid, UUID playerUuid) {
+	public PlayingCardView(CardFace face, CardSuit suit, UUID uuid, UUID gameUuid, UUID playerUuid) {
 		this.face = face;
 		this.suit = suit;
+		this.uuid = uuid;
 		this.gameUuid = gameUuid;
 		this.playerUuid = playerUuid;
 	}
@@ -25,6 +27,10 @@ public class PlayingCardView {
 
 	public CardSuit getSuit() {
 		return suit;
+	}
+	
+	public UUID getUuid() {
+		return uuid;
 	}
 
 	public UUID getGameUuid() {

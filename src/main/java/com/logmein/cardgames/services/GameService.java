@@ -2,7 +2,6 @@ package com.logmein.cardgames.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -11,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.logmein.cardgames.api.commands.CreateGameCommand;
 import com.logmein.cardgames.api.commands.DeckGameAssociationCommand;
+import com.logmein.cardgames.api.views.DeckView;
 import com.logmein.cardgames.api.views.GameView;
 import com.logmein.cardgames.domain.entities.Card;
 import com.logmein.cardgames.domain.entities.Deck;
@@ -45,10 +45,10 @@ public class GameService {
 		gameRepository.delete(game);
 	}
 	
-	public GameView addDeckToGame(DeckGameAssociationCommand command) {
+	public DeckView addDeckToGame(UUID gameUuid, DeckGameAssociationCommand command) {
 		Deck deck = deckRepository.findOneWithRelationsByUuid(command.deckUuid).orElseThrow();
-		Game game = gameRepository.findOneByUuid(command.gameUuid).orElseThrow();
-		int availableCards = playingCardRepository.countAvailableCardsByGame(command.gameUuid);
+		Game game = gameRepository.findOneByUuid(gameUuid).orElseThrow();
+		int availableCards = playingCardRepository.countAvailableCardsByGame(gameUuid);
 		
 		deck.setGame(game);
 		
@@ -66,7 +66,10 @@ public class GameService {
 		deckRepository.save(deck);
 		playingCardRepository.saveAll(playingCards);
 		
-		return new GameView(game.getUuid(), game.getName());
+		GameView gameView = new GameView(game.getUuid(), game.getName());
+		DeckView deckView = new DeckView(deck.getUuid());
+		deckView.setGame(gameView);
+		return deckView;
 	}
 
 	public List<GameView> all() {

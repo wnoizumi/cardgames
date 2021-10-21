@@ -105,9 +105,8 @@ public class PlayerServiceIntegrationTest {
 		DeckView deckView = deckService.newDeck();
 		DeckGameAssociationCommand command = new DeckGameAssociationCommand();
 		command.deckUuid = deckView.getUuid();
-		command.gameUuid = game.getUuid();
 		
-		gameService.addDeckToGame(command);
+		gameService.addDeckToGame(game.getUuid(), command);
 		
 		PlayingCardView cardViewOne = playingCardService.dealCardToPlayer(playerOne.getUuid());
 		PlayingCardView cardViewTwo = playingCardService.dealCardToPlayer(playerOne.getUuid());

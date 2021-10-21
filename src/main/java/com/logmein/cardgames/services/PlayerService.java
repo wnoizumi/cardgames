@@ -2,7 +2,6 @@ package com.logmein.cardgames.services;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.logmein.cardgames.api.commands.AddPlayerCommand;
+import com.logmein.cardgames.api.views.GameView;
 import com.logmein.cardgames.api.views.PlayerView;
 import com.logmein.cardgames.domain.entities.Game;
 import com.logmein.cardgames.domain.entities.Player;
@@ -37,7 +37,9 @@ public class PlayerService {
 		
 		Player newPlayer = playerRepository.save(new Player(command.name, game));
 		
-		return new PlayerView(newPlayer.getName(), newPlayer.getUuid(), 0);
+		PlayerView playerView = new PlayerView(newPlayer.getName(), newPlayer.getUuid(), 0);
+		playerView.setGame(new GameView(game.getUuid(), game.getName()));
+		return playerView;
 	}
 	
 	public void deletePlayer(UUID uuid) {
@@ -69,5 +71,12 @@ public class PlayerService {
 		return hand.stream()
 					.map(pc -> pc.getCard().getFace().getFaceValue())
 					.reduce(0, Integer::sum);			
+	}
+
+	public PlayerView one(UUID playerUuid) {
+		Player player = playerRepository.findOneWithGameByUuid(playerUuid).orElseThrow();
+		PlayerView playerView = new PlayerView(player.getName(), player.getUuid(), 0);
+		playerView.setGame(new GameView(player.getGame().getUuid(), player.getGame().getName()));
+		return playerView;
 	}
 }

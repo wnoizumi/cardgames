@@ -1,7 +1,9 @@
 package com.logmein.cardgames.domain.entities;
 
 import java.util.Objects;
+import java.util.UUID;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,6 +19,9 @@ public class PlayingCard {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(unique = true, nullable = false)
+	private UUID uuid;
+	
 	@OneToOne(fetch = FetchType.LAZY, optional = false)
 	private Card card;
 	
@@ -28,13 +33,12 @@ public class PlayingCard {
 	
 	private Integer shufflePosition;
 	
-	/***
-	 * This constructor should only be used by Hibernate
-	 */
-	@Deprecated
-	protected PlayingCard() {}
+	protected PlayingCard() {
+		this.uuid = UUID.randomUUID();
+	}
 	
 	public PlayingCard(Card card, Game game) {
+		this();
 		this.card = card;
 		this.game = game;
 	}
@@ -45,6 +49,14 @@ public class PlayingCard {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public UUID getUuid() {
+		return uuid;
+	}
+
+	private void setUuid(UUID uuid) {
+		this.uuid = uuid;
 	}
 
 	public Card getCard() {

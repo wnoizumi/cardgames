@@ -8,7 +8,7 @@ import org.springframework.hateoas.server.core.Relation;
 public class DeckView {
 	
 	private UUID uuid;
-	private GameView gameView;
+	private GameView game;
 	
 	public DeckView(UUID uuid) {
 		this.uuid = uuid;
@@ -18,11 +18,11 @@ public class DeckView {
 		return uuid;
 	}
 
-	public GameView getGameView() {
-		return gameView;
+	public GameView getGame() {
+		return game;
 	}
 
-	public void setGameView(GameView gameView) {
-		this.gameView = gameView;
+	public void setGame(GameView gameView) {
+		this.game = gameView;
 	}
 }

@@ -86,9 +86,8 @@ public class PlayingCardServiceIntegrationTest {
 		DeckView deckView = deckService.newDeck();
 		DeckGameAssociationCommand command = new DeckGameAssociationCommand();
 		command.deckUuid = deckView.getUuid();
-		command.gameUuid = game.getUuid();
 		
-		gameService.addDeckToGame(command);
+		gameService.addDeckToGame(game.getUuid(), command);
 	}
 	
 	@Test

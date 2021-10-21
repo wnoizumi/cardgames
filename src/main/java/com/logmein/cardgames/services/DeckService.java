@@ -50,7 +50,7 @@ public class DeckService {
 		Deck deck = deckRepository.findOneByWithGameUuid(uuid).orElseThrow();
 		DeckView deckView = new DeckView(deck.getUuid());
 		if (deck.getGame() != null) {
-			deckView.setGameView(new GameView(deck.getGame().getUuid(), deck.getGame().getName()));
+			deckView.setGame(new GameView(deck.getGame().getUuid(), deck.getGame().getName()));
 		}
 		return deckView;
 	}

@@ -51,13 +51,13 @@ public class PlayingCardService {
 		dealtCard = playingCardRepository.save(dealtCard);
 		Card card = dealtCard.getCard();
 		
-		return new PlayingCardView(card.getFace(), card.getSuit(), game.getUuid(), player.getUuid());
+		return new PlayingCardView(card.getFace(), card.getSuit(), dealtCard.getUuid(), game.getUuid(), player.getUuid());
 	}
 	
 	public List<PlayingCardView> getCardsOfPlayer(UUID playerUuid) {
 		return playingCardRepository.findAllByPlayer(playerUuid)
 							.stream()
-							.map(pc -> new PlayingCardView(pc.getFace(), pc.getSuit(), pc.getGameUuid(), pc.getPlayerUuid()))
+							.map(pc -> new PlayingCardView(pc.getFace(), pc.getSuit(), pc.getUuid(), pc.getGameUuid(), pc.getPlayerUuid()))
 							.collect(Collectors.toList());
 	}
 	
@@ -96,5 +96,9 @@ public class PlayingCardService {
 			currentPosition++;
 		}
 		playingCardRepository.saveAll(shuffledCards);
+	}
+
+	public PlayingCardView one(UUID cardUuid) {
+		return null;
 	}
 }

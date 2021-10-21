@@ -7,6 +7,7 @@ public class PlayerView implements Comparable<PlayerView> {
 	private String name;
 	private UUID uuid;
 	private Integer handValue;
+	private GameView game;
 	
 	public PlayerView(String name, UUID uuid, Integer handValue) {
 		this.name = name;
@@ -24,6 +25,14 @@ public class PlayerView implements Comparable<PlayerView> {
 
 	public Integer getHandValue() {
 		return handValue;
+	}
+
+	public GameView getGame() {
+		return game;
+	}
+
+	public void setGame(GameView game) {
+		this.game = game;
 	}
 
 	@Override

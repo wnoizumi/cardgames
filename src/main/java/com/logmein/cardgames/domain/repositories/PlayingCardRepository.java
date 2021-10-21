@@ -26,7 +26,7 @@ public interface PlayingCardRepository extends JpaRepository<PlayingCard, Long> 
 	@Query("SELECT COUNT(pc) FROM PlayingCard pc LEFT JOIN pc.game g WHERE g.uuid = :gameuuid AND pc.player IS NULL")
 	Integer countAvailableCardsByGame(@Param("gameuuid") UUID gameUuid);
 	
-	@Query("SELECT NEW com.logmein.cardgames.domain.projections.PlayingCardProjection(c.face, c.suit, g.uuid, p.uuid) "
+	@Query("SELECT NEW com.logmein.cardgames.domain.projections.PlayingCardProjection(c.face, c.suit, pc.uuid, g.uuid, p.uuid) "
 			+ "FROM PlayingCard pc JOIN pc.card c JOIN pc.game g JOIN pc.player p "
 			+ "WHERE p.uuid = :playeruuid")
 	List<PlayingCardProjection> findAllByPlayer(@Param("playeruuid") UUID playerUuid);

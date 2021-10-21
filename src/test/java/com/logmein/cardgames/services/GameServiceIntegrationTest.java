@@ -99,11 +99,10 @@ public class GameServiceIntegrationTest {
 		DeckView deckView = deckService.newDeck();
 		DeckGameAssociationCommand command = new DeckGameAssociationCommand();
 		command.deckUuid = deckView.getUuid();
-		command.gameUuid = game.getUuid();
 		
-		GameView gameView = gameService.addDeckToGame(command);
+		deckView = gameService.addDeckToGame(game.getUuid(), command);
 		
-		List<PlayingCard> playingCards = playingCardRepository.findAllAvailableByGame(gameView.getUuid());
+		List<PlayingCard> playingCards = playingCardRepository.findAllAvailableByGame(deckView.getGame().getUuid());
 		
 		assertThat(playingCards, hasSize(52));
 	}

@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "Games")
 @RestController
-@RequestMapping(path = "/gamesboard/api/decks")
+@RequestMapping(path = "/api/decks")
 public class DecksApi {
 	
 	private DeckService deckService;

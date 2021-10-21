@@ -8,6 +8,4 @@ public class DeckGameAssociationCommand {
 
 	@NotNull
 	public UUID deckUuid;
-	@NotNull
-	public UUID gameUuid;
 }

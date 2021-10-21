@@ -11,20 +11,21 @@ import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
 import com.logmein.cardgames.api.GamesApi;
-import com.logmein.cardgames.api.views.GameView;
+import com.logmein.cardgames.api.views.PlayerView;
 
 @Component
-public class GameViewAssembler implements SimpleRepresentationModelAssembler<GameView> {
+public class PlayerViewAssembler implements SimpleRepresentationModelAssembler<PlayerView> {
 
 	@Override
-	public void addLinks(EntityModel<GameView> resource) {
+	public void addLinks(EntityModel<PlayerView> resource) {
 		UUID uuid = resource.getContent().getUuid();
-		resource.add(linkTo(methodOn(GamesApi.class).one(uuid)).withSelfRel());
-		resource.add(linkTo(methodOn(GamesApi.class).all()).withRel("games"));
+		UUID gameUuid = resource.getContent().getGame().getUuid();
+		resource.add(linkTo(methodOn(GamesApi.class).onePlayer(gameUuid, uuid)).withSelfRel());
+		resource.add(linkTo(methodOn(GamesApi.class).one(gameUuid)).withRel("game"));
 	}
 
 	@Override
-	public void addLinks(CollectionModel<EntityModel<GameView>> resources) {
+	public void addLinks(CollectionModel<EntityModel<PlayerView>> resources) {
 		resources.add(linkTo(methodOn(GamesApi.class).all()).withSelfRel());
 	}
 
