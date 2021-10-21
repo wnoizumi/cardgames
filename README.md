@@ -2,6 +2,8 @@
 
 <div id="top"></div>
 
+![example workflow](https://github.com/wnoizumi/cardgames/actions/workflows/main.yml/badge.svg)
+
 
 <!-- TABLE OF CONTENTS -->
 <details>
